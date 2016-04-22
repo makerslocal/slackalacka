@@ -21,18 +21,19 @@ var slackbots = require('slackbots');
 ////////////
 // config //
 ////////////
-var irc_bot = new irc.Client(secrets.irc.server, secrets.irc.botName, {
+/*var irc_bot = new irc.Client(secrets.irc.server, secrets.irc.botName, {
     userName: secrets.irc.botUser,
     realName: secrets.irc.botReal,
     debug: true,
     showErrors: true,
     channels: ['#makerslocal', '##gen'],
-});
+});*/
 var slack_bot = new slackbots({
     token: secrets.slack.token, // Add a bot https://my.slack.com/services/new/bot and put the token
     name: secrets.slack.botName
 });
 
+/*
 irc_bot.addListener('message#', function (from, to, text, message) {
     console.log(from + ' => ' + to + ': ' + message + ' [' + text + ']');
     var slack_text = '[' + from + '] ' + text;
@@ -52,7 +53,7 @@ irc_bot.addListener('registered', function(message) {
     var ident_msg = 'IDENTIFY ' + secrets.irc.identPassword;
     irc_bot.say('NickServ', ident_msg);
 });
-
+*/
 slack_bot.on('start', function() {
     // more information about additional params https://api.slack.com/methods/chat.postMessage
 
@@ -68,13 +69,19 @@ slack_bot.on('start', function() {
 });
 
 slack_bot.on('message', function(data) {
-    console.log(data);
+    console.log("From slack: [" + data.user + "] " + data.text);
+	console.log(util.inspect(data));
+    slack_bot.getUsers().then(
+	function(data2) {
+	console.log(util.inspect(data2));
+}
+);
     var irc_text = '[' + data.user + '] ' + data.text;
-    if (data.channel === 'irc_gen') {
+    /*if (data.channel === 'irc_gen') {
         irc_bot.say('##gen', irc_text);
     } else if (data.channel === 'irc_makerslocal') {
         irc_bot.say('#makerslocal', irc_text);
-    }
+    }*/
 });
 
 //client.join('#makerslocal');
